@@ -1,0 +1,804 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>A Special Question 💖</title>
+
+  <!-- Romantic fonts: Great Vibes (script) + Cormorant Infant (body) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Infant:wght@300;400;500;600;700&family=Great+Vibes&display=swap" rel="stylesheet" />
+
+  <style>
+    /* ── Reset & base ───────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --pink-deep:   #DB2777;
+      --pink-mid:    #F472B6;
+      --pink-light:  #FBCFE8;
+      --pink-bg:     #FDF2F8;
+      --rose-dark:   #831843;
+      --gold:        #CA8A04;
+      --white:       #ffffff;
+      --shadow:      0 8px 32px rgba(219,39,119,0.15);
+    }
+
+    html, body {
+      height: 100%;
+      font-family: 'Cormorant Infant', Georgia, serif;
+      background: var(--pink-bg);
+      color: var(--rose-dark);
+      overflow-x: hidden;
+    }
+
+    /* Respect reduced-motion preference */
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+    }
+
+    /* ── Animated gradient background ──────────────────────────── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      background: linear-gradient(135deg, #FDF2F8 0%, #FCE7F3 35%, #FFF1F2 65%, #FDF2F8 100%);
+      background-size: 400% 400%;
+      animation: bgShift 12s ease infinite;
+    }
+
+    @keyframes bgShift {
+      0%   { background-position: 0% 50%; }
+      50%  { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    /* ── Floating hearts canvas ─────────────────────────────────── */
+    #hearts-canvas {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    /* ── Page wrapper ───────────────────────────────────────────── */
+    .page {
+      position: relative;
+      z-index: 2;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem 1rem;
+    }
+
+    /* ── Card shell ─────────────────────────────────────────────── */
+    .card {
+      background: rgba(255,255,255,0.82);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      border: 1px solid rgba(244,114,182,0.3);
+      border-radius: 2rem;
+      box-shadow: var(--shadow);
+      padding: 3rem 2.5rem;
+      max-width: 520px;
+      width: 100%;
+      text-align: center;
+    }
+
+    /* ── Landing screen ─────────────────────────────────────────── */
+    #landing { display: flex; }
+    #landing .card { animation: cardIn 0.8s cubic-bezier(0.34,1.56,0.64,1) both; }
+
+    @keyframes cardIn {
+      from { opacity: 0; transform: translateY(40px) scale(0.95); }
+      to   { opacity: 1; transform: translateY(0)   scale(1); }
+    }
+
+    .emoji-top {
+      font-size: 3rem;
+      line-height: 1;
+      margin-bottom: 1rem;
+      display: block;
+      animation: pulse 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50%       { transform: scale(1.12); }
+    }
+
+    .script-label {
+      font-family: 'Great Vibes', cursive;
+      font-size: clamp(1.4rem, 5vw, 2rem);
+      color: var(--pink-mid);
+      margin-bottom: 0.5rem;
+      display: block;
+    }
+
+    .main-question {
+      font-family: 'Cormorant Infant', serif;
+      font-size: clamp(1.6rem, 6vw, 2.6rem);
+      font-weight: 700;
+      color: var(--rose-dark);
+      line-height: 1.2;
+      margin-bottom: 0.75rem;
+    }
+
+    .sub-text {
+      font-size: 1.05rem;
+      font-weight: 400;
+      color: var(--pink-deep);
+      margin-bottom: 2.5rem;
+      opacity: 0.85;
+    }
+
+    /* ── Buttons container ──────────────────────────────────────── */
+    .btn-group {
+      display: flex;
+      gap: 1.25rem;
+      justify-content: center;
+      align-items: center;
+      flex-wrap: wrap;
+      /* Extra height so the No button has room to escape within this zone */
+      min-height: 80px;
+      position: relative;
+    }
+
+    /* Shared button base */
+    .btn {
+      font-family: 'Cormorant Infant', serif;
+      font-size: 1.25rem;
+      font-weight: 600;
+      padding: 0.75rem 2.25rem;
+      border: none;
+      border-radius: 3rem;
+      cursor: pointer;
+      transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+      outline-offset: 4px;
+      white-space: nowrap;
+      min-width: 130px;
+      min-height: 52px;
+    }
+
+    /* Yes button */
+    #btn-yes {
+      background: linear-gradient(135deg, var(--pink-deep) 0%, #BE185D 100%);
+      color: var(--white);
+      box-shadow: 0 4px 20px rgba(219,39,119,0.4);
+      position: relative;
+    }
+
+    #btn-yes:hover, #btn-yes:focus-visible {
+      transform: scale(1.07);
+      box-shadow: 0 6px 28px rgba(219,39,119,0.55);
+    }
+
+    /* Tooltip on yes */
+    #btn-yes::after {
+      content: 'Good choice 😉';
+      position: absolute;
+      bottom: calc(100% + 10px);
+      left: 50%;
+      transform: translateX(-50%) scale(0.85);
+      background: var(--rose-dark);
+      color: var(--white);
+      font-size: 0.85rem;
+      font-weight: 500;
+      padding: 0.35rem 0.9rem;
+      border-radius: 1rem;
+      white-space: nowrap;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.25s ease, transform 0.25s ease;
+    }
+
+    #btn-yes:hover::after, #btn-yes:focus-visible::after {
+      opacity: 1;
+      transform: translateX(-50%) scale(1);
+    }
+
+    /* No button — sits naturally next to Yes until first hover, then goes fixed */
+    #btn-no {
+      background: rgba(255,255,255,0.9);
+      color: var(--pink-deep);
+      border: 2px solid var(--pink-light);
+      box-shadow: 0 2px 10px rgba(219,39,119,0.1);
+    }
+
+    #btn-no:hover, #btn-no:focus-visible {
+      background: var(--pink-bg);
+    }
+
+    /* ── Confirmation screen ────────────────────────────────────── */
+    #confirmation {
+      display: none;
+      animation: fadeIn 0.6s ease both;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to   { opacity: 1; }
+    }
+
+    #confirmation.visible { display: flex; }
+
+    #confirmation .card {
+      max-width: 560px;
+      animation: popIn 0.7s cubic-bezier(0.34,1.56,0.64,1) both;
+    }
+
+    @keyframes popIn {
+      from { opacity: 0; transform: scale(0.75); }
+      to   { opacity: 1; transform: scale(1); }
+    }
+
+    .confirm-icon {
+      font-size: 3.5rem;
+      display: block;
+      margin-bottom: 0.5rem;
+      animation: bounce 1s cubic-bezier(0.34,1.56,0.64,1) both;
+      animation-delay: 0.3s;
+    }
+
+    @keyframes bounce {
+      from { transform: scale(0); }
+      to   { transform: scale(1); }
+    }
+
+    .confirm-title {
+      font-family: 'Great Vibes', cursive;
+      font-size: clamp(2rem, 7vw, 3rem);
+      color: var(--pink-deep);
+      margin-bottom: 0.25rem;
+    }
+
+    .confirm-subtitle {
+      font-size: 1.1rem;
+      color: var(--rose-dark);
+      margin-bottom: 1.75rem;
+      opacity: 0.9;
+    }
+
+    /* Booking card */
+    .booking-card {
+      background: linear-gradient(135deg, rgba(253,242,248,0.9), rgba(255,241,242,0.9));
+      border: 1px solid var(--pink-light);
+      border-radius: 1.25rem;
+      padding: 1.5rem;
+      text-align: left;
+      margin-bottom: 1.5rem;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.8);
+      animation: slideUp 0.5s ease both;
+      animation-delay: 0.45s;
+      opacity: 0;
+      animation-fill-mode: forwards;
+    }
+
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .booking-header {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      margin-bottom: 1.1rem;
+      padding-bottom: 0.85rem;
+      border-bottom: 1px solid var(--pink-light);
+    }
+
+    .booking-header svg { flex-shrink: 0; }
+
+    .booking-header-text {
+      font-size: 0.8rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--pink-deep);
+    }
+
+    .booking-ref {
+      font-size: 0.75rem;
+      color: var(--pink-mid);
+      margin-top: 0.15rem;
+    }
+
+    /* Grid of detail rows */
+    .booking-details { display: flex; flex-direction: column; gap: 0.7rem; }
+
+    .detail-row {
+      display: grid;
+      grid-template-columns: 22px 1fr;
+      gap: 0.6rem;
+      align-items: start;
+    }
+
+    .detail-row svg { margin-top: 1px; flex-shrink: 0; }
+
+    .detail-label {
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--pink-mid);
+      line-height: 1;
+    }
+
+    .detail-value {
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--rose-dark);
+      line-height: 1.35;
+    }
+
+    .detail-value small {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 400;
+      color: var(--pink-deep);
+      opacity: 0.8;
+    }
+
+    .divider {
+      border: none;
+      border-top: 1px dashed var(--pink-light);
+      margin: 0.4rem 0;
+    }
+
+    /* Romantic message */
+    .romantic-msg {
+      font-family: 'Great Vibes', cursive;
+      font-size: clamp(1.4rem, 4.5vw, 1.9rem);
+      color: var(--pink-deep);
+      margin-bottom: 1.5rem;
+      animation: slideUp 0.5s ease both;
+      animation-delay: 0.6s;
+      opacity: 0;
+      animation-fill-mode: forwards;
+    }
+
+    /* Directions button */
+    .btn-directions {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-family: 'Cormorant Infant', serif;
+      font-size: 1.15rem;
+      font-weight: 600;
+      padding: 0.7rem 2rem;
+      border-radius: 3rem;
+      background: linear-gradient(135deg, var(--gold) 0%, #A16207 100%);
+      color: var(--white);
+      text-decoration: none;
+      box-shadow: 0 4px 18px rgba(202,138,4,0.35);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      cursor: pointer;
+      animation: slideUp 0.5s ease both;
+      animation-delay: 0.75s;
+      opacity: 0;
+      animation-fill-mode: forwards;
+    }
+
+    .btn-directions:hover, .btn-directions:focus-visible {
+      transform: scale(1.06);
+      box-shadow: 0 6px 24px rgba(202,138,4,0.5);
+      outline-offset: 4px;
+    }
+
+    /* ── Sparkle burst overlay (shown on Yes click) ─────────────── */
+    #sparkle-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 999;
+      pointer-events: none;
+      display: none;
+    }
+
+    /* ── Responsive tweaks ──────────────────────────────────────── */
+    @media (max-width: 480px) {
+      .card { padding: 2.25rem 1.5rem; border-radius: 1.5rem; }
+      .booking-card { padding: 1.25rem 1rem; }
+      .btn-group { gap: 1rem; }
+      .btn { min-width: 110px; font-size: 1.1rem; padding: 0.65rem 1.75rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ── Floating hearts canvas ─────────────────────────────── -->
+  <canvas id="hearts-canvas" aria-hidden="true"></canvas>
+
+  <!-- ── Sparkle overlay (fires when Yes is clicked) ────────── -->
+  <canvas id="sparkle-overlay" aria-hidden="true"></canvas>
+
+  <!-- ════════════════════════════════════════════════════════ -->
+  <!--  SCREEN 1 — Landing / Question                          -->
+  <!-- ════════════════════════════════════════════════════════ -->
+  <div class="page" id="landing" role="main">
+    <div class="card">
+      <span class="emoji-top" aria-hidden="true">💝</span>
+      <span class="script-label">Hey…</span>
+
+      <h1 class="main-question">Can I take you out<br>for your birthday?</h1>
+      <p class="sub-text">I have something special planned&nbsp;✨</p>
+
+      <div class="btn-group">
+        <!-- Yes button -->
+        <button
+          id="btn-yes"
+          class="btn"
+          aria-label="Yes, I would love that"
+          onclick="handleYes()"
+        >
+          Yes&nbsp;💖
+        </button>
+
+        <!-- No button — runs away on hover/click (listeners wired in JS) -->
+        <button
+          id="btn-no"
+          class="btn"
+          aria-label="No (but you probably won't catch it)"
+        >
+          No&nbsp;🙈
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════════════════════ -->
+  <!--  SCREEN 2 — Booking Confirmation                        -->
+  <!-- ════════════════════════════════════════════════════════ -->
+  <div class="page" id="confirmation" aria-live="polite">
+    <div class="card">
+      <span class="confirm-icon" aria-hidden="true">🥂</span>
+
+      <h2 class="confirm-title">Booking Confirmed</h2>
+      <p class="confirm-subtitle">Thanks for saying yes&nbsp;💖</p>
+
+      <!-- Booking details card -->
+      <div class="booking-card" role="region" aria-label="Booking details">
+
+        <!-- Header row -->
+        <div class="booking-header">
+          <!-- Fork & knife icon -->
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#DB2777" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><line x1="7" y1="2" x2="7" y2="22"/>
+            <path d="M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h1v7"/>
+          </svg>
+          <div>
+            <div class="booking-header-text">Gaucho Broadgate</div>
+          </div>
+        </div>
+
+        <div class="booking-details">
+
+          <!-- Table size -->
+          <div class="detail-row">
+            <!-- Users icon -->
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#F472B6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/>
+              <path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+            </svg>
+            <div>
+              <div class="detail-label">Table</div>
+              <div class="detail-value">2 people</div>
+            </div>
+          </div>
+
+          <hr class="divider" />
+
+          <!-- Date -->
+          <div class="detail-row">
+            <!-- Calendar icon -->
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#F472B6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/>
+              <line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>
+            </svg>
+            <div>
+              <div class="detail-label">Date</div>
+              <div class="detail-value">Friday, 5 June 2026</div>
+            </div>
+          </div>
+
+          <!-- Time -->
+          <div class="detail-row">
+            <!-- Clock icon -->
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#F472B6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+            </svg>
+            <div>
+              <div class="detail-label">Time</div>
+              <div class="detail-value">21:30</div>
+            </div>
+          </div>
+
+          <hr class="divider" />
+
+          <!-- Address -->
+          <div class="detail-row">
+            <!-- Map pin icon -->
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#F472B6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/>
+            </svg>
+            <div>
+              <div class="detail-label">Address</div>
+              <div class="detail-value">
+                5 Finsbury Avenue
+                <small>London, EC2M 2PG</small>
+              </div>
+            </div>
+          </div>
+
+        </div><!-- /booking-details -->
+      </div><!-- /booking-card -->
+
+      <!-- Romantic closing message -->
+      <p class="romantic-msg">I can't wait to celebrate you ❤️</p>
+
+      <!-- Directions button -->
+      <a
+        class="btn-directions"
+        href="https://www.google.com/maps/search/?api=1&query=5+Finsbury+Avenue+London+EC2M+2PG"
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label="Get directions to Gaucho Broadgate on Google Maps"
+      >
+        <!-- Navigation icon -->
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <polygon points="3 11 22 2 13 21 11 13 3 11"/>
+        </svg>
+        Get Directions
+      </a>
+
+    </div>
+  </div><!-- /confirmation -->
+
+  <!-- ════════════════════════════════════════════════════════ -->
+  <!--  JavaScript                                             -->
+  <!-- ════════════════════════════════════════════════════════ -->
+  <script>
+    /* ── Floating hearts ──────────────────────────────────── */
+    (function () {
+      const canvas = document.getElementById('hearts-canvas');
+      const ctx = canvas.getContext('2d');
+
+      // Resize canvas to fill viewport
+      function resize() {
+        canvas.width  = window.innerWidth;
+        canvas.height = window.innerHeight;
+      }
+      window.addEventListener('resize', resize);
+      resize();
+
+      // Heart colours (soft palette)
+      const colours = ['#F472B6', '#DB2777', '#FBCFE8', '#FCA5A5', '#FDE68A'];
+
+      // Build initial set of hearts
+      const hearts = Array.from({ length: 22 }, () => makeHeart());
+
+      function makeHeart(fromBottom) {
+        const size = 10 + Math.random() * 18;
+        return {
+          x:       Math.random() * window.innerWidth,
+          y:       fromBottom ? window.innerHeight + size
+                              : Math.random() * window.innerHeight,
+          size,
+          speed:   0.4 + Math.random() * 0.7,
+          drift:   (Math.random() - 0.5) * 0.4,
+          opacity: 0.25 + Math.random() * 0.45,
+          colour:  colours[Math.floor(Math.random() * colours.length)],
+          wobble:  Math.random() * Math.PI * 2,
+          wobbleSpeed: 0.02 + Math.random() * 0.02,
+        };
+      }
+
+      // Draw a heart shape centred at (x, y)
+      function drawHeart(ctx, x, y, size, colour, opacity) {
+        ctx.save();
+        ctx.globalAlpha = opacity;
+        ctx.fillStyle   = colour;
+        ctx.beginPath();
+        // Standard parametric heart (scaled by size/10)
+        const s = size / 10;
+        ctx.moveTo(x, y - s * 2.5);
+        ctx.bezierCurveTo(x + s * 5, y - s * 8, x + s * 10, y + s * 1, x, y + s * 6.5);
+        ctx.bezierCurveTo(x - s * 10, y + s * 1, x - s * 5, y - s * 8, x, y - s * 2.5);
+        ctx.closePath();
+        ctx.fill();
+        ctx.restore();
+      }
+
+      function animate() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        hearts.forEach((h, i) => {
+          h.wobble += h.wobbleSpeed;
+          h.x += Math.sin(h.wobble) * h.drift;
+          h.y -= h.speed;
+
+          // Reset hearts that float off the top
+          if (h.y < -h.size * 2) {
+            hearts[i] = makeHeart(true);
+          }
+
+          drawHeart(ctx, h.x, h.y, h.size, h.colour, h.opacity);
+        });
+
+        requestAnimationFrame(animate);
+      }
+      animate();
+    })();
+
+    /* ── No button escape logic ───────────────────────────── */
+    const noBtn = document.getElementById('btn-no');
+    let isEscaping  = false;
+    let hasEscaped  = false; // true once the button has gone fixed for the first time
+
+    // Called on the very first interaction.
+    // Snapshots the button's natural position, inserts a spacer so the
+    // Yes button stays centred, then switches to position:fixed at the
+    // identical coordinates — completely invisible to the user.
+    // On the next frame (after the browser has painted), we enable the
+    // CSS transition and fly the button to a random spot.
+    function firstEscape() {
+      const rect = noBtn.getBoundingClientRect();
+      const w    = noBtn.offsetWidth;
+      const h    = noBtn.offsetHeight;
+
+      // Spacer keeps the flex row from jumping
+      const spacer = document.createElement('span');
+      spacer.setAttribute('aria-hidden', 'true');
+      spacer.style.cssText =
+        `display:inline-block;width:${w}px;height:${h}px;flex-shrink:0;pointer-events:none;`;
+      noBtn.parentNode.insertBefore(spacer, noBtn);
+
+      // Pin to current visual spot with no transition (identical position, zero flash)
+      Object.assign(noBtn.style, {
+        position:   'fixed',
+        zIndex:     '100',
+        margin:     '0',
+        left:       rect.left + 'px',
+        top:        rect.top  + 'px',
+        transition: 'none',
+      });
+
+      // Next frame: enable smooth movement, then move immediately
+      requestAnimationFrame(() => {
+        noBtn.style.transition =
+          'left 0.38s cubic-bezier(0.34,1.56,0.64,1), top 0.38s cubic-bezier(0.34,1.56,0.64,1)';
+        hasEscaped = true;
+        moveToRandom();
+      });
+    }
+
+    function moveToRandom() {
+      if (isEscaping) return;
+      isEscaping = true;
+
+      const btnW   = noBtn.offsetWidth;
+      const btnH   = noBtn.offsetHeight;
+      const margin = 24;
+      const curX   = parseFloat(noBtn.style.left) || 0;
+      const curY   = parseFloat(noBtn.style.top)  || 0;
+
+      // Pick a position far enough from the current one so it visibly moves
+      let newX, newY, attempts = 0;
+      do {
+        newX = margin + Math.random() * (window.innerWidth  - btnW  - margin * 2);
+        newY = margin + Math.random() * (window.innerHeight - btnH  - margin * 2);
+        attempts++;
+      } while (attempts < 30 && Math.hypot(newX - curX, newY - curY) < 130);
+
+      noBtn.style.left = newX + 'px';
+      noBtn.style.top  = newY + 'px';
+
+      setTimeout(() => { isEscaping = false; }, 420);
+    }
+
+    function escapeButton() {
+      if (!hasEscaped) {
+        firstEscape(); // handles moving itself after going fixed
+      } else {
+        moveToRandom();
+      }
+    }
+
+    noBtn.addEventListener('mouseenter', escapeButton);
+    noBtn.addEventListener('click',      escapeButton);
+    noBtn.addEventListener('touchstart', (e) => {
+      e.preventDefault();
+      escapeButton();
+    }, { passive: false });
+
+    /* ── Sparkle burst canvas ─────────────────────────────── */
+    function launchSparkles(cb) {
+      const canvas  = document.getElementById('sparkle-overlay');
+      const ctx     = canvas.getContext('2d');
+      canvas.width  = window.innerWidth;
+      canvas.height = window.innerHeight;
+      canvas.style.display = 'block';
+
+      const cx = window.innerWidth  / 2;
+      const cy = window.innerHeight / 2;
+      const colours = ['#DB2777','#F472B6','#FCA5A5','#FDE68A','#C4B5FD','#ffffff'];
+
+      // Create particles
+      const particles = Array.from({ length: 80 }, () => {
+        const angle = Math.random() * Math.PI * 2;
+        const speed = 3 + Math.random() * 7;
+        return {
+          x: cx, y: cy,
+          vx: Math.cos(angle) * speed,
+          vy: Math.sin(angle) * speed,
+          size: 4 + Math.random() * 8,
+          colour: colours[Math.floor(Math.random() * colours.length)],
+          alpha: 1,
+          decay: 0.012 + Math.random() * 0.018,
+        };
+      });
+
+      let done = false;
+      function draw() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        let allFaded = true;
+
+        particles.forEach(p => {
+          p.x     += p.vx;
+          p.y     += p.vy;
+          p.vy    += 0.18; // gravity
+          p.alpha -= p.decay;
+          if (p.alpha > 0) {
+            allFaded = false;
+            ctx.save();
+            ctx.globalAlpha = Math.max(0, p.alpha);
+            ctx.fillStyle   = p.colour;
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.restore();
+          }
+        });
+
+        if (!allFaded) {
+          requestAnimationFrame(draw);
+        } else if (!done) {
+          done = true;
+          canvas.style.display = 'none';
+          cb && cb();
+        }
+      }
+      draw();
+    }
+
+    /* ── Yes button handler ───────────────────────────────── */
+    function handleYes() {
+      // Disable button to prevent double-fire
+      const yesBtn = document.getElementById('btn-yes');
+      yesBtn.disabled = true;
+      yesBtn.textContent = 'Yay! 🎉';
+
+      // 1. Launch sparkle burst
+      launchSparkles(() => {
+        // 2. Fade out landing, show confirmation
+        const landing      = document.getElementById('landing');
+        const confirmation = document.getElementById('confirmation');
+
+        landing.style.transition = 'opacity 0.5s ease';
+        landing.style.opacity    = '0';
+
+        setTimeout(() => {
+          landing.style.display       = 'none';
+          confirmation.classList.add('visible');
+          // Scroll to top in case of mobile
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        }, 500);
+      });
+    }
+  </script>
+
+</body>
+</html>
